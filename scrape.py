@@ -1,3 +1,4 @@
+import traceback
 from selenium import webdriver
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.firefox.options import Options
@@ -6,25 +7,6 @@ import csv
 import sys
 import re
 import time
-
-
-course_id = input(
-    "Enter the course id exactly as you see it on sis EX:'CSCI 1200' (capitalization is important): "
-).strip()
-print(course_id)
-output_file_name = input("Enter the output file name: ").strip()
-print(output_file_name)
-
-
-options = Options()
-options.headless = True
-
-transfer_course_url = "https://sis.rpi.edu/rss/yhwwkwags.P_Select_Inst"
-driver = webdriver.Firefox(options=options)
-driver.get(transfer_course_url)
-
-
-output_data = []
 
 
 def scrape_place(type):
@@ -165,6 +147,27 @@ def scrape_school(schools, place, type, real_name):
         ).click()  # reclick Get Institutions button
 
 
-# scrape schools then nations
-scrape_place("stat_code")
-scrape_place("natn_code")
+try:
+    course_id = input(
+        "Enter the course id exactly as you see it on sis EX:'CSCI 1200' (capitalization is important): "
+    ).strip()
+    print(course_id)
+    output_file_name = input("Enter the output file name: ").strip()
+    print(output_file_name)
+
+    options = Options()
+    options.headless = True
+
+    transfer_course_url = "https://sis.rpi.edu/rss/yhwwkwags.P_Select_Inst"
+    driver = webdriver.Firefox(options=options)
+    driver.get(transfer_course_url)
+
+    output_data = []
+
+    # scrape schools then nations
+    scrape_place("stat_code")
+    scrape_place("natn_code")
+except:
+    traceback.print_exc()
+finally:
+    driver.quit()
