@@ -79,6 +79,9 @@ def scrape(real_name):
             time.sleep(5)
             continue
         break
+    if school_name == None:
+        print("ERROR code 4821")
+        sys.exit(1)
 
     table = soup.find("table", {"id": "TransArtTable"})
     table = table.find("tbody")
@@ -137,9 +140,16 @@ def scrape_school(schools, place, type, real_name):
         if school == "":
             continue
         # print("Working on school number:", school)
-        Select(driver.find_element_by_name("sbgi_code")).select_by_value(
-            school
-        )  # set the select box to the current school
+        for i in range(0, 10):  # tries this up to 10 times if it crashes
+            try:
+                Select(driver.find_element_by_name("sbgi_code")).select_by_value(
+                    school
+                )  # set the select box to the current school
+            except:
+                time.sleep(5)
+                continue
+            break
+
         driver.find_element_by_css_selector(
             "[value='Get Courses']"
         ).click()  # click to load the classes for the course
